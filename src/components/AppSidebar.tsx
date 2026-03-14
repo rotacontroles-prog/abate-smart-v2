@@ -17,6 +17,14 @@ import {
   ChevronLeft,
   ChevronRight,
   ClipboardList,
+  ArrowDownCircle,
+  ArrowUpCircle,
+  TrendingUp,
+  BookOpen,
+  DollarSign,
+  Landmark,
+  UserCheck,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -29,9 +37,20 @@ const navItems = [
   { label: "Ordens Desossa", icon: Scissors, path: "/operacional/desossa", group: "Operacional" },
   { label: "Cortes Desossa", icon: PackageOpen, path: "/operacional/cortes", group: "Operacional" },
   { label: "Câmaras Frias", icon: Snowflake, path: "/operacional/camaras", group: "Operacional" },
+
+  { label: "Contas a Pagar", icon: ArrowDownCircle, path: "/financeiro/pagar", group: "Financeiro" },
+  { label: "Contas a Receber", icon: ArrowUpCircle, path: "/financeiro/receber", group: "Financeiro" },
+  { label: "Fluxo de Caixa", icon: TrendingUp, path: "/financeiro/fluxo", group: "Financeiro" },
+  { label: "Plano de Contas", icon: BookOpen, path: "/financeiro/plano-contas", group: "Financeiro" },
+  { label: "Lançamentos", icon: DollarSign, path: "/financeiro/lancamentos", group: "Financeiro" },
+  { label: "Contas Bancárias", icon: Landmark, path: "/financeiro/contas-bancarias", group: "Financeiro" },
+
   { label: "Pessoas", icon: Users, path: "/cadastros/pessoas", group: "Cadastros" },
   { label: "Empresas", icon: Building2, path: "/cadastros/empresas", group: "Cadastros" },
   { label: "Produtos", icon: Package, path: "/cadastros/produtos", group: "Cadastros" },
+  { label: "Vendedores", icon: UserCheck, path: "/cadastros/vendedores", group: "Cadastros" },
+
+  { label: "Relatórios", icon: BarChart3, path: "/relatorios", group: "BI" },
   { label: "Configurações", icon: Settings, path: "/configuracoes", group: "Sistema" },
 ];
 
