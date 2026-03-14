@@ -11,25 +11,41 @@ import { toast } from "sonner";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
+    if (isSignUp && password !== confirmPassword) {
+      toast.error("As senhas não coincidem");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
-      toast.success("Login realizado com sucesso!");
-      navigate("/");
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+        if (error) throw error;
+        toast.success("Conta criada! Verifique seu e-mail para confirmar.");
+        setIsSignUp(false);
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        toast.success("Login realizado com sucesso!");
+        navigate("/");
+      }
     } catch (error: any) {
-      toast.error(error.message || "Erro ao fazer login");
+      toast.error(error.message || "Erro na autenticação");
     } finally {
       setLoading(false);
     }
@@ -52,12 +68,14 @@ export default function Login() {
 
         <Card className="border-border/40 bg-[#121212]/60 backdrop-blur-2xl shadow-2xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Acesse sua conta</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">
+              {isSignUp ? "Crie sua conta" : "Acesse sua conta"}
+            </CardTitle>
             <CardDescription className="text-center">
-              Entre com suas credenciais para continuar
+              {isSignUp ? "Preencha os dados abaixo para começar" : "Entre com suas credenciais para continuar"}
             </CardDescription>
           </CardHeader>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleAuth}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">E-mail</Label>
@@ -77,9 +95,11 @@ export default function Login() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Senha</Label>
-                  <Button variant="link" className="p-0 h-auto text-xs text-muted-foreground hover:text-emerald-500 transition-colors">
-                    Esqueceu a senha?
-                  </Button>
+                  {!isSignUp && (
+                    <Button variant="link" className="p-0 h-auto text-xs text-muted-foreground hover:text-emerald-500 transition-colors">
+                      Esqueceu a senha?
+                    </Button>
+                  )}
                 </div>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -94,6 +114,24 @@ export default function Login() {
                   />
                 </div>
               </div>
+              
+              {isSignUp && (
+                <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
+                  <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      id="confirmPassword" 
+                      type="password" 
+                      placeholder="••••••••" 
+                      className="pl-10 bg-background/40 border-border/40 focus:border-emerald-500/50 transition-colors"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+              )}
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
               <Button 
@@ -104,10 +142,10 @@ export default function Login() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Entrando...
+                    {isSignUp ? "Criando conta..." : "Entrando..."}
                   </>
                 ) : (
-                  "Entrar no Sistema"
+                  isSignUp ? "Criar Conta" : "Entrar no Sistema"
                 )}
               </Button>
 
@@ -152,9 +190,13 @@ export default function Login() {
         </Card>
         
         <p className="px-8 text-center text-sm text-muted-foreground mt-8">
-          Novo por aqui?{" "}
-          <Button variant="link" className="p-0 h-auto text-emerald-500 font-semibold hover:underline">
-            Solicite uma demonstração
+          {isSignUp ? "Já tem uma conta?" : "Novo por aqui?"}{" "}
+          <Button 
+            variant="link" 
+            className="p-0 h-auto text-emerald-500 font-semibold hover:underline"
+            onClick={() => setIsSignUp(!isSignUp)}
+          >
+            {isSignUp ? "Faça login" : "Crie sua conta agora"}
           </Button>
         </p>
       </div>
